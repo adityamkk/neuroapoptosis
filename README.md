@@ -8,3 +8,4 @@ This program used Tensorflow and Keras (for constructing the model) and Sklearn 
 In the future, this program may implement various other metrics of analysis, such as precision and recall instead of accuracy.
 
 ## Installation
+Download the "NeuroapoptosisModel.ipynb" file and upload it to Google Drive. Simply open Colab and run.
