@@ -22,6 +22,59 @@ In the future, this program may implement various other metrics of analysis, suc
 ## Installation
 Download the "NeuroapoptosisModel.ipynb" file and upload it to Google Drive. Simply open Colab and run.
 
+## Experiment and Analysis Plan
+
+
+1. Create a VGG16 image classification model
+   a. Solving Bodies vs. Non-bodies (https://academic.oup.com/cercor/article/29/1/215/4653734)
+   b. Give images two distinct labels → bodies and non-bodies
+   c. Split the dataset into 83% training, 7% validation, and 10% testing (K. K. Dobbin and R. M. Simon, Optimally splitting cases for training and testing high dimensional classifiers, BMC Med. Genet. 4 (2011), no. 1, 1– 8.   https://bmcmedgenomics.biomedcentral.com/articles/10.1186/1755-8794-4-31?report=reader )
+   d. Resize images into a 224x224 format since VGG16 only accepts that size
+   e. Instantiate a new VGG16 model
+      i. Weights are based from imagenet
+      ii. Remove the top and replace with input stream
+      iii. VGG model specifically is not trainable
+   f. Attach 3 Layers to the end of the VGG16 model
+      i. One Flatten Layer → in order to reduce the dimensions of the output of the VGG16 model → make output 1D
+      ii. Apply PCA to the output of the Flatten layer
+         1. 62 categories → 95% of variance explained by 62 categories http://ufldl.stanford.edu/tutorial/unsupervised/PCAWhitening/
+         2. svd=randomized
+      iii. One SVM layer → Make final classification
+         1. Activation is linear
+         2. Has a L2 Ridge regression regularizer → to make sure weights don’t become zero (Regularization in Machine Learning || Simplilearn.)
+         3. Regularizer hyperparameter is optimized through keras-tuner Hyperband
+         4. Hyperparameter is between 0.0 and 0.1 [NEED SOURCE]
+   g. Compile Model
+      i. Optimizer is adam (standard)
+         1. Learning rate is set to 0.01 instead of the default (0.001)
+         2. This learning rate was found through repeated observation of different learning rates. The default rate was too low for the model to adjust weights quickly enough.
+      ii. Loss function is hinge (for the SVM)
+      iii. Only evaluates accuracy (precision may be more useful)
+      iv. 50 epochs maximum and batch size of 20 allows for 100 iterations → almost the number of images in the dataset.
+2. Find BSI (Body Selectivity Index) for each neuron in penultimate layer
+   a. Split testing dataset into bodies and non-bodies (since BSI requires two firing rates)
+   b. Note: Firing rate of neuron is equal to its activation
+   c. For both categories, feed in single stimulus, and record activations of a neuron in layer
+   d. Average the activations of the neuron for all stimuli for both categories separately
+   e. Subtract both mean body and mean non-body activations by the baseline activation to find R_B and R_NB.
+   f. Calculate the BSI for each neuron.
+3. Experimental Procedure
+   a. Threshold all neurons with |BSI| >= 0.33
+   b. Repeat 100 times for each deletion within layer:  0%-100% removal rates, 10% skips
+      i. Delete randomly selected (use choice) neurons
+      ii. Record proportion of neurons above thresholded BSI
+      iii. Test model for accuracy and record
+      iv. Place results into array
+   c. Plot results for each deletion percentage on scatterplot
+   d. Intra-deletion analysis
+      i. Find mean and standard deviation for accuracies
+      ii. Select BSI threshold rates where corresponding accuracies are more than 1 stdev away from the mean
+      iii. Find the average threshold rate and compare to the rates found in 3dii
+      iv. Find statistically significant difference between threshold rates → this can determine if selectivity plays an important role for classification → does removing a selective neuron impact classification more than a non-selective neuron?
+   e. Inter-deletion analysis
+      i. Statistically significant difference between mean accuracies? Two-prop z-test
+
+
 ## Sources
 
 https://www.tensorflow.org/guide/keras/train_and_evaluate
