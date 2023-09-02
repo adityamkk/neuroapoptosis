@@ -21,3 +21,21 @@ In the future, this program may implement various other metrics of analysis, suc
 
 ## Installation
 Download the "NeuroapoptosisModel.ipynb" file and upload it to Google Drive. Simply open Colab and run.
+
+## Sources
+
+https://www.tensorflow.org/guide/keras/train_and_evaluate
+
+https://www.learndatasci.com/tutorials/hands-on-transfer-learning-keras/
+
+https://www.learndatasci.com/tutorials/convolutional-neural-networks-image-classification/#UsingImageDataGeneratorfortraining
+
+https://towardsdatascience.com/transfer-learning-with-vgg16-and-keras-50ea161580b4
+
+https://github.com/sudhir2016/Google-Colab-3/blob/master/VGG16.ipynb
+
+https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
+
+https://stackoverflow.com/questions/66571756/how-can-you-get-the-activations-of-the-neurons-during-an-inference-in-tensorflow
+
+https://gist.github.com/martinsbruveris/1ce43d4fe36f40e29e1f69fd036f1626
